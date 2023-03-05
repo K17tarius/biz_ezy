@@ -9,7 +9,7 @@ import Account from "./pages/Registration/Registration";
 import RegistrationForm from "./pages/Registration/Registration";
 import LoginForm from "./pages/Login/login";
 import Vendorlisting from "./pages/VendorListing/vendorlisting";
-import AddProduct from "./pages/Vendorshop/vendoradd";
+import AddProduct from "./pages/AddProduct/addproduct";
 import ProductCards from "./pages/Cart/cart";
 
 export default function App() {
@@ -21,7 +21,7 @@ export default function App() {
           <Route path="shop" element={<Shop />} />
           <Route path="registration" element={<RegistrationForm />} />
           <Route path="login" element={<LoginForm />} />
-          <Route path="vendoradd" element={<AddProduct />} />
+          <Route path="addproduct" element={<AddProduct />} />
           <Route path="vendorlisting" element={<Vendorlisting />} />
           <Route path="cart" element={<ProductCards />} />
           {/* <Route path="*" element={<NoPage />} /> */}

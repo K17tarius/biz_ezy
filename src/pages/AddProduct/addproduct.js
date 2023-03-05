@@ -1,4 +1,4 @@
-import "./vendoradd.css";
+import "./addproduct.css";
 
 function AddProduct(){
     return(

@@ -1,10 +1,15 @@
 import React, { useState, setState } from "react";
 import "./login.css";
-import {  signInWithEmailAndPassword   } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { Toast, ToastContainer } from "react-bootstrap";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
+import Cookies from 'universal-cookie';
+
 function LoginForm() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -16,6 +21,14 @@ function LoginForm() {
     }
   };
 
+  function showToastMessage(msg) {
+    setToastMessage(msg);
+    setShowToast(true);
+    window.setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  }
+
   const handleSubmit = () => {
     console.log(email, password);
 
@@ -25,17 +38,20 @@ function LoginForm() {
         const user = userCredential.user;
         console.log(user);
 
-        if(user.emailVerified){
-            console.log("log in success")
-        }
-        else{
-            console.log("verify email to log in")
+        if (user.emailVerified) {
+          showToastMessage('Logged in successfully!');
+          const cookies = new Cookies();
+          cookies.set('umail', email, { path: '/' });
+          cookies.set('upass', password, { path: '/' });
+        } else {
+          showToastMessage('Verify email to log in!');
         }
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
+        showToastMessage(errorMessage);
       });
   };
 
@@ -74,6 +90,27 @@ function LoginForm() {
           Login
         </button>
       </div>
+      <ToastContainer className="p-3" position={"bottom-center"}>
+        <Toast
+          show={showToast}
+          onClose={() => {
+            setShowToast(false);
+          }}
+        >
+          <Toast.Header>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded me-2"
+              alt=""
+              onClick={() => {
+                setShowToast(false);
+              }}
+            />
+            <strong className="me-auto">Message</strong>
+          </Toast.Header>
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }

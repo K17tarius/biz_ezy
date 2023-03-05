@@ -4,26 +4,37 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import IncDecCounter from "../../components/Inc-Dec/inc-dec";
 import Footer from "../../components/Footer/Footer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { collection, getDocs  } from "firebase/firestore"; 
+import { db } from "../../firebase";
 
 function Shop() {
-  var [items, setItems] = useState([
-    {
-      image: "/images/1.jpg",
-      name: "Taylor",
-      price: "₹1200",
-    },
-    {
-      image: "/images/1.jpg",
-      name: "Taylor",
-      price: "₹1200",
-    },
-    {
-      image: "/images/1.jpg",
-      name: "Taylor",
-      price: "₹1200",
-    },
-  ]);
+  var [items, setItems] = useState([]);
+
+  const getAllItems = async () => {
+    const querySnapshot = await getDocs(collection(db, "items"));
+    var myItems = [];
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      console.log(doc.id, " => ", doc.data());
+      myItems.push(
+        {
+          image: doc.data().itemImage,
+          name: doc.data().itemName,
+          price: doc.data().itemPrice,
+        }
+      )
+    });
+
+    console.log(myItems)
+    setItems(myItems);
+  }
+
+
+  useEffect(()=>{
+    getAllItems();
+  }, [])
+
   return (
     <div>
       <Container>
