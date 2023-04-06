@@ -1,5 +1,6 @@
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useState } from 'react';
+import Cookies from 'universal-cookie';
 import { db } from '../../firebase';
 import "./vendorlogin.css";
 
@@ -17,20 +18,25 @@ function VendorLoginPage() {
 
 
   const checkLogin = async () => {
-    const q = query( collection(db, "vendors"));
+    const q = query( collection(db, "vendors"), where("Vendor_email", "==", vendorLogin.email), where("Vendor_pass", "==", vendorLogin.password));
     const querySnapshot = await getDocs(q);
     var myItems = [];
+    const cookies = new Cookies();
+
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       console.log(doc.data())
-      // myItems.push({
-      //   itemId: doc.id,
-      //   itemName: doc.data().itemName,
-      //   quantity: doc.data().itemQuantity,
-      //   price: doc.data().itemPrice,
-      //   dateAdded: doc.data().itemAddedOn.toDate(),
-      // });
+      cookies.set('umail', vendorLogin.email, { path: '/' });
+      cookies.set('upass', vendorLogin.password, { path: '/' });
+      cookies.set('uid', doc.data().Vendor_ID, { path: '/' });
+      cookies.set('uloggedin', true, { path: '/' });
+      cookies.set('utype', 'vendor', { path: '/' });
+      cookies.set('uname', doc.data().Vendor_name, { path: '/' })
+
     });
+
+    window.location.href = '/'
+
 
   }
 

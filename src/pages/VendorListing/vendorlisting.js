@@ -8,10 +8,12 @@ import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
 import { collection, query, where, getDocs, deleteDoc, doc  } from "firebase/firestore";
 import { db } from "../../firebase";
+import Cookies from "universal-cookie";
 
 function Vendorlisting() {
-  const currentVendorId = "123";
-
+  const cookies = new Cookies();
+  const currentVendorId =  cookies.get('uid');
+  
   var [listing, setListing] = useState([]);
   var [loaded, setLoaded] = useState(false);
   const [showToast, setShowToast] = useState(false);

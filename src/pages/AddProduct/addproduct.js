@@ -4,9 +4,12 @@ import { Toast, ToastContainer } from "react-bootstrap";
 import { collection, addDoc } from "firebase/firestore"; 
 import { db } from "../../firebase";
 import { limitChecker } from "../../commonservice";
+import Cookies from "universal-cookie";
 
 function AddProduct() {
-  const currentVendorId = "123";
+  const cookies = new Cookies();
+  const currentVendorId =  cookies.get('uid');
+
 
   const [itemName, setItemName] = useState(null);
   const [itemImage, setItemImage] = useState(null);

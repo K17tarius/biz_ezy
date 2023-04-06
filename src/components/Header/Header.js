@@ -11,11 +11,15 @@ import Cookies from "universal-cookie";
 function Header() {
 
   var [userName, setUserName] = useState(null);
+  var [isVendor, setIsVendor] = useState(false);
   const cookies = new Cookies();
 
   useEffect(()=>{
     if(cookies.get('uname')){
       setUserName(cookies.get('uname').split(' ')[0])
+    }
+    if(cookies.get('utype') == 'vendor'){
+      setIsVendor(true);
     }
   }, [])
 
@@ -51,6 +55,9 @@ function Header() {
             }
              { userName &&
             <NavDropdown title={userName} id="basic-nav-dropdown">
+              {isVendor && 
+                <NavDropdown.Item href="/vendorlisting">Vendor Listing</NavDropdown.Item>
+              }
               <NavDropdown.Item href="/" onClick={()=>{logout()}}>Logout</NavDropdown.Item>
             </NavDropdown>
             }
