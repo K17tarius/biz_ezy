@@ -5,7 +5,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import Cookies from 'universal-cookie';
 
-
 function LoginForm() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -44,6 +43,14 @@ function LoginForm() {
           const cookies = new Cookies();
           cookies.set('umail', email, { path: '/' });
           cookies.set('upass', password, { path: '/' });
+          cookies.set('uid', user.uid, { path: '/' });
+          cookies.set('uloggedin', true, { path: '/' });
+          cookies.set('utype', 'customer', { path: '/' });
+          cookies.set('uname', user.displayName, { path: '/' })
+          window.setTimeout(()=>{
+            window.location.href = '/'
+          },1500)
+
         } else {
           showToastMessage('Verify email to log in!');
         }

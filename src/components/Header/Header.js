@@ -5,8 +5,29 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
 
 function Header() {
+
+  var [userName, setUserName] = useState(null);
+  const cookies = new Cookies();
+
+  useEffect(()=>{
+    if(cookies.get('uname')){
+      setUserName(cookies.get('uname').split(' ')[0])
+    }
+  }, [])
+
+  function logout(){
+    cookies.remove('umail');
+    cookies.remove('uid');
+    cookies.remove('upass');
+    cookies.remove('uloggedin');
+    cookies.remove('utype');
+    cookies.remove('uname');
+  }
+
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -20,13 +41,19 @@ function Header() {
             <Nav.Link href="/shop">Shop</Nav.Link>
             <Nav.Link href="/analytics">About Us</Nav.Link>
             <Nav.Link href="/categories">Categories</Nav.Link>
+            { !userName &&
             <NavDropdown title="My Account" id="basic-nav-dropdown">
-              <NavDropdown.Item href="/registration">Customer Registeration</NavDropdown.Item>
-              <NavDropdown.Item href="/vregistration">Vendor Registeration</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="/login">Customer Login</NavDropdown.Item>
-              <NavDropdown.Item href="/vendorlisting">Vendor Login</NavDropdown.Item>
+              <NavDropdown.Item href="/registration">Register</NavDropdown.Item>
+              {/* <NavDropdown.Item href="/vregistration">Vendor Registration</NavDropdown.Item> */}
+              <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+              <NavDropdown.Item href="/vendorlogin">Vendor Login</NavDropdown.Item>
             </NavDropdown>
+            }
+             { userName &&
+            <NavDropdown title={userName} id="basic-nav-dropdown">
+              <NavDropdown.Item href="/" onClick={()=>{logout()}}>Logout</NavDropdown.Item>
+            </NavDropdown>
+            }
             <div className="searchbarHolder">
               <input placeholder="Search" className="searchbar"></input>
               <div className="searchbarBtn">

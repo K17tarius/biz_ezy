@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import "./itemcard.css";
 import { Toast, ToastContainer } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import Cookies from "universal-cookie";
 
 function ItemCard(props) {
   let [num, setNum] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  const buyProduct = async () => {
-    console.log(props.cardData)
-    console.log(num)
 
+
+  const buyProduct = async () => {
     if(props.cardData.stock - num < 0){
       showToastMessage('Quantity more than stock, cannot buy!');
     }
@@ -35,6 +35,34 @@ function ItemCard(props) {
     }, 3000);
   }
 
+  function addToCart(){
+    const cookies = new Cookies();
+    
+    var count = num;
+    var cartItems = cookies.get('cart') ? cookies.get('cart') : []
+
+    for(var i=0;i<cartItems.length;i++){
+      if(cartItems[i].id == props.cardData.id){
+        count += cartItems[i].count;
+        cartItems.splice(i, 1);
+      }
+    }
+
+    if(props.cardData.stock - count < 0){
+      showToastMessage('Quantity more than stock, cannot buy!');
+    }
+    else{
+      cartItems.push({
+        'id' : props.cardData.id,
+        'count' : count,
+        'name' : props.cardData.name,
+        'price' : props.cardData.price
+      })
+      cookies.set('cart', cartItems);
+      showToastMessage('Added ' + props.cardData.name + " to cart!");
+      setNum(0);
+    }
+  }
   
   let incNum = () => {
     if (num < 10) {
@@ -59,7 +87,7 @@ function ItemCard(props) {
             style={{ backgroundImage: "url(" + props.cardData.image + ")" }}
           ></div>
           <div className="itemCardTitle">{props.cardData.name}</div>
-          <div className="itemCardPrice">{props.cardData.price}</div>
+          <div className="itemCardPrice">Rs {props.cardData.price}</div>
           <div className={"holder"}>
             <button onClick={decNum}>-</button>
             <input type="text" value={num} onChange={handleChange} />
@@ -69,6 +97,7 @@ function ItemCard(props) {
             variant="light"
             type="button"
             style={{ width: "100%", marginTop: "10px" }}
+            onClick={()=>{addToCart()}}
           >
             Add to Cart
           </Button>
