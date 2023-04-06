@@ -14,9 +14,6 @@ const LeftNav = () => {
   ];
 
   return (
-    <Container fluid>
-      <Row>
-        <Col sm={2} className="bg-light">
           <Nav defaultActiveKey="/" className="flex-column pt-3">
             <Nav.Item>
               <Nav.Link href="/" className="text-dark"><FontAwesomeIcon icon={faHome} className="mr-2" />Home</Nav.Link>
@@ -42,12 +39,6 @@ const LeftNav = () => {
               </Nav.Item>
             ))}
           </Nav>
-        </Col>
-        <Col sm={10} className="bg-white">
-          {/* Main content */}
-        </Col>
-      </Row>
-    </Container>
   );
 }
 
