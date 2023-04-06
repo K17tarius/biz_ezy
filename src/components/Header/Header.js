@@ -18,12 +18,13 @@ function Header() {
           <Nav className="ml-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/shop">Shop</Nav.Link>
-            <Nav.Link href="/Us">About Us</Nav.Link>
-            <Nav.Link href="#link">Contact Us</Nav.Link>
+            <Nav.Link href="/analytics">About Us</Nav.Link>
+            <Nav.Link href="/categories">Categories</Nav.Link>
             <NavDropdown title="My Account" id="basic-nav-dropdown">
-              <NavDropdown.Item href="/registration">Register</NavDropdown.Item>
+              <NavDropdown.Item href="/registration">Customer Registeration</NavDropdown.Item>
+              <NavDropdown.Item href="/vregistration">Vendor Registeration</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+              <NavDropdown.Item href="/login">Customer Login</NavDropdown.Item>
               <NavDropdown.Item href="/vendorlisting">Vendor Login</NavDropdown.Item>
             </NavDropdown>
             <div className="searchbarHolder">

@@ -2,10 +2,11 @@ import "./vendorlisting.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Toast, ToastContainer } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, deleteDoc, doc  } from "firebase/firestore";
 import { db } from "../../firebase";
 
 function Vendorlisting() {
@@ -13,6 +14,8 @@ function Vendorlisting() {
 
   var [listing, setListing] = useState([]);
   var [loaded, setLoaded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const getAllItems = async () => {
     const q = query(
@@ -23,9 +26,8 @@ function Vendorlisting() {
     var myItems = [];
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
       myItems.push({
-        itemId: doc.data().itemId,
+        itemId: doc.id,
         itemName: doc.data().itemName,
         quantity: doc.data().itemQuantity,
         price: doc.data().itemPrice,
@@ -37,8 +39,29 @@ function Vendorlisting() {
     setLoaded(true);
   };
 
-  function openAddPage(){
-    window.open('/addproduct',"_self")
+  function openAddPage() {
+    window.open("/addproduct", "_self");
+  }
+
+  function removeProduct(itemId){
+    deleteDoc(doc(db, "items", itemId)).then((data)=>{
+      showToastMessage('Deleted Succesfully!');
+      window.setTimeout(()=>{
+        window.location.reload(false);
+      },1000);
+    })
+  }
+
+  function showToastMessage(msg) {
+    setToastMessage(msg);
+    setShowToast(true);
+    window.setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  }
+
+  function openPage(itemId) {
+    window.open("/editproduct?id=" + itemId, "_self");
   }
 
   useEffect(() => {
@@ -60,11 +83,11 @@ function Vendorlisting() {
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Item ID</th>
+                    {/* <th>Item ID</th> */}
                     <th>Item Name</th>
                     <th>Stock</th>
                     <th>Price</th>
-                    <th>Added At</th>
+                    <th>Last Updated At</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -74,13 +97,22 @@ function Vendorlisting() {
                       <>
                         <tr>
                           <td>{i + 1}</td>
-                          <td>{el.itemId}</td>
+                          {/* <td>{el.itemId}</td> */}
                           <td>{el.itemName}</td>
                           <td>{el.quantity}</td>
                           <td>{el.price}</td>
                           <td>{el.dateAdded.toString()}</td>
                           <td>
-                            <u>Edit</u> <u>Remove</u>
+                            <u
+                              onClick={() => {
+                                openPage(el.itemId);
+                              }}
+                            >
+                              Edit
+                            </u>{" "}
+                            <u onClick={() => {
+                                removeProduct(el.itemId);
+                              }}>Remove</u>
                           </td>
                         </tr>
                       </>
@@ -89,10 +121,37 @@ function Vendorlisting() {
                 </tbody>
               </Table>
             )}
-            <Button onClick={()=>{openAddPage()}}>Add Product</Button>
+            <Button
+              onClick={() => {
+                openAddPage();
+              }}
+            >
+              Add Product
+            </Button>
           </Col>
         </Row>
       </Container>
+      <ToastContainer className="p-3" position={"bottom-center"}>
+        <Toast
+          show={showToast}
+          onClose={() => {
+            setShowToast(false);
+          }}
+        >
+          <Toast.Header>
+            <img
+              src="holder.js/20x20?text=%20"
+              className="rounded me-2"
+              alt=""
+              onClick={() => {
+                setShowToast(false);
+              }}
+            />
+            <strong className="me-auto">Message</strong>
+          </Toast.Header>
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 }

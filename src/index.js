@@ -10,7 +10,13 @@ import RegistrationForm from "./pages/Registration/Registration";
 import LoginForm from "./pages/Login/login";
 import Vendorlisting from "./pages/VendorListing/vendorlisting";
 import AddProduct from "./pages/AddProduct/addproduct";
-import ProductCards from "./pages/Cart/cart";
+import ShoppingCart from "./pages/Cart/cart";
+import EditProduct from "./pages/EditProduct/editProduct";
+import VendorRegistrationPage from "./pages/VRegistration/vregistration";
+import VendorLoginPage from "./pages/VLogin/vendorlogin";
+import CategoriesPage from "./pages/Categories/categories";
+import AnalyticsReport from "./pages/Analytics/analytics";
+
 
 export default function App() {
   return (
@@ -23,7 +29,12 @@ export default function App() {
           <Route path="login" element={<LoginForm />} />
           <Route path="addproduct" element={<AddProduct />} />
           <Route path="vendorlisting" element={<Vendorlisting />} />
-          <Route path="cart" element={<ProductCards />} />
+          <Route path="cart" element={<ShoppingCart />} />
+          <Route path="editproduct" element={<EditProduct />} />
+          <Route path="vregistration" element={<VendorRegistrationPage />} />
+          <Route path="vendorlogin" element={<VendorLoginPage />} />
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="analytics" element={<AnalyticsReport />} />
           {/* <Route path="*" element={<NoPage />} /> */}
         </Route>
       </Routes>

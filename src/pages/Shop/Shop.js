@@ -1,12 +1,11 @@
 import "./Shop.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import IncDecCounter from "../../components/Inc-Dec/inc-dec";
 import Footer from "../../components/Footer/Footer";
 import { useEffect, useState } from "react";
 import { collection, getDocs  } from "firebase/firestore"; 
 import { db } from "../../firebase";
+import ItemCard from "../../components/ItemCard/itemcard";
 
 function Shop() {
   var [items, setItems] = useState([]);
@@ -22,6 +21,8 @@ function Shop() {
           image: doc.data().itemImage,
           name: doc.data().itemName,
           price: doc.data().itemPrice,
+          stock: doc.data().itemQuantity,
+          id : doc.id
         }
       )
     });
@@ -41,21 +42,13 @@ function Shop() {
         <Row className="mt-4">
           {items.map((el, i) => {
             return (
-              <>
-                <Col md="3">
-                  <div className={"itemCard"}>
-                    <div className="itemCardImageBox" style={{backgroundImage: 'url(' + el.image + ')'}}></div>
-                    <div className="itemCardTitle">{el.name}</div>
-                    <div className="itemCardPrice">{el.price}</div>
-                    <IncDecCounter></IncDecCounter>
-                  </div>
-                </Col>
-              </>
+              <ItemCard
+               cardData = {el}
+              ></ItemCard>
             );
           })}
         </Row>
       </Container>
-      <Footer></Footer>
     </div>
   );
 }
