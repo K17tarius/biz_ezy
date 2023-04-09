@@ -1,61 +1,152 @@
-import React from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, ProgressBar } from "react-bootstrap";
-import { Line, Bar } from "react-chartjs-2";
+import { db } from "../../firebase";
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line, Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 
 function AnalyticsReport() {
-  const data = {
-    totalRevenue: 10000,
-    totalOrders: 500,
-    totalCustomers: 100,
-    averageOrderValue: 20,
-    salesByCategory: {
-      doors: 30,
-      windows: 50,
-      railing: 20,
+
+  var [totalRevenue, setTotalRevenue] = useState(0);
+  var [totalOrders, setTotalOrders] = useState(0);
+  var [totalCustomer, setTotalCustomer] = useState(0);
+  var [averageOrderValue, setAverageOrderValue] = useState(0);
+  const [chartData1, setChartData1] = useState(null); 
+  const [chartData2, setChartData2] = useState(null); 
+
+  
+  // const bestSellersData =  {
+  //   bestSellersLabel,
+  //   datasets: [
+  //     {
+  //       label: 'Sale',
+  //       data: bestSellersValue,
+  //       backgroundColor: 'rgba(255, 99, 132, 0.5)',
+  //     }
+  //   ]
+  // }
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+      title: {
+        display: false,
+        text: '',
+      },
     },
-    monthlySales: {
-      labels: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-      datasets: [
-        {
-          label: "Monthly Sales",
-          data: [
-            1200, 1900, 3000, 5000, 2000, 3000, 7000, 8000, 6000, 4000, 8000,
-            10000,
-          ],
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderWidth: 1,
-        },
-      ],
-    },
-    bestSellers: [
-      {
-        name: "Aluminum Door",
-        sales: 200,
-      },
-      {
-        name: "Aluminum Window",
-        sales: 150,
-      },
-      {
-        name: "Aluminum Railing",
-        sales: 100,
-      },
-    ],
   };
+
+
+  useEffect(()=>{
+    const q = collection(db, "orders");
+    getDocs(q).then((querySnapshot)=>{
+      var totalRevenue = 0;
+      var totalOrders = 0;
+      var customers = [];
+      var totalItemPrice = 0;
+      var itemCount = 0;
+      var monthlySalesData = [0,0,0,0,0,0,0,0,0,0,0,0]
+      var bestSellerCount = {}
+
+      querySnapshot.forEach((doc) => {
+        for(var i=0;i<doc.data().items.length;i++){
+          totalRevenue+= parseInt(doc.data().items[i].price) * doc.data().items[i].count
+          totalItemPrice+= parseInt(doc.data().items[i].price);
+          itemCount +=1;
+
+          if(bestSellerCount[doc.data().items[i].name]){
+            bestSellerCount[doc.data().items[i].name] += 1
+          }
+          else{
+            bestSellerCount[doc.data().items[i].name] = 1
+          }
+        }
+        monthlySalesData[doc.data().itemAddedOn.toDate().getMonth()] += 1
+        totalOrders+=1;
+        if(customers.includes(doc.data().addedBy) == false){
+          customers.push(doc.data().addedBy)
+        }
+      
+      });
+
+      setTotalRevenue(totalRevenue)
+      setTotalOrders(totalOrders)
+      setTotalCustomer(customers.length)
+      var average = (totalItemPrice/itemCount);
+      setAverageOrderValue(average)
+
+
+      // Line Chart
+
+      const labels_line = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
+      setChartData1({
+        labels: labels_line,
+        datasets: [
+          {
+            label: 'Sales',
+            data: monthlySalesData,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          }
+        ],
+      })
+
+
+      // Bar Chart
+
+      var bestSellerlabel = []
+      var bestSellerValues = []
+
+      for(var item in bestSellerCount){
+        bestSellerlabel.push(item);
+        bestSellerValues.push(bestSellerCount[item])
+      }
+
+      setChartData2({
+        labels: bestSellerlabel,
+        datasets: [
+          {
+            label: 'Sales',
+            data: bestSellerValues,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          }
+        ],
+      })
+    })
+   
+
+  }, []);
+
+
+
+
 
   return (
     <div className="py-5 bg-light">
@@ -66,7 +157,7 @@ function AnalyticsReport() {
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Total Revenue</Card.Title>
-                <Card.Text>${data.totalRevenue}</Card.Text>
+                <Card.Text>Rs {totalRevenue}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -74,7 +165,7 @@ function AnalyticsReport() {
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Total Orders</Card.Title>
-                <Card.Text>{data.totalOrders}</Card.Text>
+                <Card.Text>{totalOrders}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -82,7 +173,7 @@ function AnalyticsReport() {
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Total Customers</Card.Title>
-                <Card.Text>{data.totalCustomers}</Card.Text>
+                <Card.Text>{totalCustomer}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -90,7 +181,7 @@ function AnalyticsReport() {
             <Card className="h-100">
               <Card.Body>
                 <Card.Title>Average Order Value</Card.Title>
-                <Card.Text>${data.averageOrderValue}</Card.Text>
+                <Card.Text>Rs {averageOrderValue}</Card.Text>
               </Card.Body>
             </Card>
           </Col>
@@ -98,7 +189,7 @@ function AnalyticsReport() {
         <Row className="mb-4">
           <Col md={6}>
             <h4>Sales by Category</h4>
-            <ProgressBar
+            {/* <ProgressBar
               now={data.salesByCategory.doors}
               label={`Doors (${data.salesByCategory.doors}%)`}
               className="mb-2"
@@ -112,49 +203,17 @@ function AnalyticsReport() {
               now={data.salesByCategory.railing}
               label={`Railing (${data.salesByCategory.railing}%)`}
               className="mb-2"
-            />
+            /> */}
           </Col>
           <Col md={6}>
             <h4>Monthly Sales</h4>
-            <Line data={data.monthlySales} />
+            {chartData1 && <Line options={options} data={chartData1} />}
           </Col>
         </Row>
         <Row>
           <Col>
             <h4>Best Sellers</h4>
-            <Bar
-              data={{
-                labels: data.bestSellers.map((item) => item.name),
-                datasets: [
-                  {
-                    label: "Sales",
-                    data: data.bestSellers.map((item) => item.sales),
-                    backgroundColor: [
-                      "rgba(255, 99, 132, 0.2)",
-                      "rgba(54, 162, 235, 0.2)",
-                      "rgba(255, 206, 86, 0.2)",
-                    ],
-                    borderColor: [
-                      "rgba(255, 99, 132, 1)",
-                      "rgba(54, 162, 235, 1)",
-                      "rgba(255, 206, 86, 1)",
-                    ],
-                    borderWidth: 1,
-                  },
-                ],
-              }}
-              options={{
-                scales: {
-                  yAxes: [
-                    {
-                      ticks: {
-                        beginAtZero: true,
-                      },
-                    },
-                  ],
-                },
-              }}
-            />
+            <Bar options={options} data={chartData2} />
           </Col>
         </Row>
       </Container>
