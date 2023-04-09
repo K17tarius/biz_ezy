@@ -1,45 +1,45 @@
 import { useState } from "react";
 import "./addproduct.css";
 import { Toast, ToastContainer } from "react-bootstrap";
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { limitChecker } from "../../commonservice";
 import Cookies from "universal-cookie";
 
 function AddProduct() {
   const cookies = new Cookies();
-  const currentVendorId =  cookies.get('uid');
-
+  const currentVendorId = cookies.get("uid");
 
   const [itemName, setItemName] = useState(null);
+  const [itemCategory, setItemCategory] = useState(null);
   const [itemImage, setItemImage] = useState(null);
   const [itemPrice, setItemPrice] = useState(null);
   const [itemStock, setItemStock] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  function handleSubmit(){
-    limitChecker('add', null, currentVendorId, itemStock, itemPrice).then((limitCheckerVal) => {
-      if( limitCheckerVal != 'Success'){
-        showToastMessage(limitCheckerVal);
+  function handleSubmit() {
+    limitChecker("add", null, currentVendorId, itemStock, itemPrice).then(
+      (limitCheckerVal) => {
+        if (limitCheckerVal != "Success") {
+          showToastMessage(limitCheckerVal);
+        } else {
+          const docRef = addDoc(collection(db, "items"), {
+            addedBy: currentVendorId,
+            itemAddedOn: new Date(),
+            itemImage: itemImage,
+            itemName: itemName,
+            itemCategory: itemCategory,
+            itemPrice: itemPrice,
+            itemQuantity: itemStock,
+          }).then((data) => {
+            showToastMessage("Added product successfully!");
+          });
+        }
       }
-      else{
-        const docRef = addDoc(collection(db, "items"), {
-          addedBy : currentVendorId,
-          itemAddedOn : new Date(),
-          itemImage : itemImage,
-          itemName : itemName,
-          itemPrice : itemPrice,
-          itemQuantity : itemStock
-      }).then((data)=>{
-        showToastMessage('Added product successfully!');
-      })
-    }
-    })
-   
-  };
+    );
+  }
 
-  
   function showToastMessage(msg) {
     setToastMessage(msg);
     setShowToast(true);
@@ -63,6 +63,25 @@ function AddProduct() {
             id="firstName"
             placeholder="Item Name"
           />
+        </div>
+        <div className="username">
+          <label className="form__label" for="firstName">
+            Item Category{" "}
+          </label>
+          {/* <input
+            className="form__input"
+            type="text"
+            value={itemName}
+            onChange={(e) => setItemCategory(e.target.value)}
+            id="firstName"
+            placeholder="Item Category"
+          /> */}
+          <select name="cars" id="cars" onChange={(e) => setItemCategory(e.target.value)} value={itemCategory}>
+            <option value="Aluminium Doors">Aluminium Doors</option>
+            <option value="Aluminium Windows">Aluminium Windows</option>
+            <option value="Wooden Doors">Wooden Doors</option>
+            <option value="PVC Doors">PVC Doors</option>
+          </select>
         </div>
         <div className="lastname">
           <label className="form__label" for="lastName">
