@@ -200,7 +200,7 @@ function AnalyticsReport() {
         <Row>
           <Col>
             <h4>Best Sellers</h4>
-            <Bar options={options} data={chartData2} />
+            {chartData2 && <Bar options={options} data={chartData2} />}
           </Col>
         </Row>
       </Container>
