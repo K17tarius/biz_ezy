@@ -36,6 +36,13 @@ function ItemCard(props) {
   }
 
   function addToCart(){
+
+    if(num <=0){
+      showToastMessage('Add products!');
+      return
+    }
+
+
     const cookies = new Cookies();
     
     var count = num;
@@ -101,14 +108,14 @@ function ItemCard(props) {
           >
             Add to Cart
           </Button>
-          <Button
+          {/* <Button
             variant="light"
             type="button"
             style={{ width: "100%", marginTop: "10px" }}
             onClick={()=>{buyProduct()}}
           >
             Buy
-          </Button>
+          </Button> */}
         </div>
       </Col>
 

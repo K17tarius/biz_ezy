@@ -58,6 +58,7 @@ function Header() {
               {isVendor && 
                 <NavDropdown.Item href="/vendorlisting">Vendor Listing</NavDropdown.Item>
               }
+              <NavDropdown.Item href="/orders">Orders</NavDropdown.Item>
               <NavDropdown.Item href="/" onClick={()=>{logout()}}>Logout</NavDropdown.Item>
             </NavDropdown>
             }

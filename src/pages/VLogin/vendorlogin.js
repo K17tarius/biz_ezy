@@ -1,5 +1,5 @@
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
 import { db } from '../../firebase';
 import "./vendorlogin.css";
@@ -15,6 +15,15 @@ function VendorLoginPage() {
     console.log(vendorLogin); // Replace with logic to submit the login data to a server
     checkLogin();
   };
+
+  useEffect(()=>{
+    const q = query( collection(db, "vendors"));
+    getDocs(q).then((querySnapshot)=>{
+      querySnapshot.forEach((doc) => {
+        console.log(doc.data())
+      })
+    });
+  },[])
 
 
   const checkLogin = async () => {
@@ -35,9 +44,9 @@ function VendorLoginPage() {
 
     });
 
-    window.location.href = '/'
-
-
+    window.setTimeout(()=>{
+      window.location.href = '/'
+    }, 1500)
   }
 
   const handleChange = (event) => {

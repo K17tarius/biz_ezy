@@ -6,7 +6,7 @@ import { Toast, ToastContainer } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
-import { collection, query, where, getDocs, deleteDoc, doc  } from "firebase/firestore";
+import { collection, query, where, getDocs, deleteDoc, doc, updateDoc  } from "firebase/firestore";
 import { db } from "../../firebase";
 import Cookies from "universal-cookie";
 
