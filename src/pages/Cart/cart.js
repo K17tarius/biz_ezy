@@ -29,6 +29,8 @@ function ShoppingCart(){
 
   function buy(){
 
+    if(cookies.get('uid')){
+
     var itemIds = [];
     var count = {}
     for(var i=0;i<cart.length;i++){
@@ -69,6 +71,10 @@ function ShoppingCart(){
         window.location.href = '/orders';
       },2500)
     })
+  }
+  else{
+    showToastMessage('Login to purchase!');
+  }
   }
 
   function showToastMessage(msg) {
