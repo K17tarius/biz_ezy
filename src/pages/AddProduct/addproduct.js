@@ -8,6 +8,7 @@ import Cookies from "universal-cookie";
 
 function AddProduct() {
   const cookies = new Cookies();
+
   const currentVendorId = cookies.get("uid");
 
   const [itemName, setItemName] = useState(null);
