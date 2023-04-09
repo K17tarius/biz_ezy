@@ -36,19 +36,6 @@ function AnalyticsReport() {
   var [averageOrderValue, setAverageOrderValue] = useState(0);
   const [chartData1, setChartData1] = useState(null); 
   const [chartData2, setChartData2] = useState(null); 
-
-  
-  // const bestSellersData =  {
-  //   bestSellersLabel,
-  //   datasets: [
-  //     {
-  //       label: 'Sale',
-  //       data: bestSellersValue,
-  //       backgroundColor: 'rgba(255, 99, 132, 0.5)',
-  //     }
-  //   ]
-  // }
-
   const options = {
     responsive: true,
     plugins: {
