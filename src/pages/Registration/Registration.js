@@ -75,7 +75,9 @@ function RegistrationForm() {
         console.log(errorCode, errorMessage);
         showToastMessage(errorMessage);
     });
-
+    setTimeout(() => {
+      document.location.reload();
+    }, 5000);
     
     // const newPostKey = push(child(ref(database), "posts")).key;
     // const updates = {};
@@ -88,6 +90,7 @@ function RegistrationForm() {
     //     showToastMessage("Error!");
     //   });
   };
+
 
   return (
     <div className="form">
