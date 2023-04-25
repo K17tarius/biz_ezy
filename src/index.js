@@ -5,7 +5,6 @@ import Home from "./pages/Home/Home";
 import Shop from "./pages/Shop/Shop";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import Account from "./pages/Registration/Registration";
 import RegistrationForm from "./pages/Registration/Registration";
 import LoginForm from "./pages/Login/login";
 import Vendorlisting from "./pages/VendorListing/vendorlisting";
@@ -17,6 +16,7 @@ import VendorLoginPage from "./pages/VLogin/vendorlogin";
 import CategoriesPage from "./pages/Categories/categories";
 import AnalyticsReport from "./pages/Analytics/analytics";
 import Orders from "./pages/Orders/orders";
+import Payment from "./pages/Payment/payment";
 
 
 export default function App() {
@@ -37,6 +37,7 @@ export default function App() {
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="analytics" element={<AnalyticsReport />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="payment" element={<Payment />} />
           {/* <Route path="*" element={<NoPage />} /> */}
         </Route>
       </Routes>
